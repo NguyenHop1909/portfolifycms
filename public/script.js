@@ -1,229 +1,199 @@
+const API = "http://localhost:3000";
+
+// ======================
+// PROFILE
+// ======================
 async function loadProfile() {
+    try {
+        const token = localStorage.getItem("token");
 
-    const res = await fetch('./data/profile.json');
-    const profile = await res.json();
+        const res = await fetch(`${API}/profile`, {
+            headers: {
+                Authorization: "Bearer " + token,
+            },
+        });
 
-    document.getElementById('hero-name')
-        .textContent = profile.name;
+        const profile = await res.json();
 
-    document.getElementById('hero-subtitle')
-        .textContent = profile.subtitle;
+        document.getElementById("hero-name").textContent =
+            profile.name || "";
 
-    document.getElementById('hero-intro')
-        .textContent = profile.intro;
+        document.getElementById("hero-subtitle").textContent =
+            profile.subtitle || "";
+
+        document.getElementById("hero-intro").textContent =
+            profile.intro || "";
+    } catch (err) {
+        console.log("Profile load error");
+    }
 }
 
+// ======================
+// PROJECTS (CMS DATA)
+// ======================
 async function loadProjects() {
+    try {
+        const token = localStorage.getItem("token");
 
-    const res =
-        await fetch('./data/projects.json');
+        const res = await fetch(`${API}/projects`, {
+            headers: {
+                Authorization: "Bearer " + token,
+            },
+        });
 
-    const projects =
-        await res.json();
+        const projects = await res.json();
 
-    const container =
-        document.querySelector('.project-list');
+        const container =
+            document.querySelector(".project-list");
 
-    container.innerHTML = projects.map((project, index) => `
-
-        <a href="${project.link}"
-           class="project-card ${index >= 4 ? 'hidden' : ''}"
+        container.innerHTML = projects
+            .map(
+                (project, index) => `
+        <a href="${project.link || "#"}"
+           class="project-card ${index >= 4 ? "hidden" : ""
+                    }"
            target="_blank">
 
-            <div class="project-thumb ${project.thumbClass}"
-                 aria-hidden="true">
-
-                <span>${project.code}</span>
-
+            <div class="project-thumb ${project.thumbClass || ""
+                    }">
+                <span>${project.code || ""}</span>
             </div>
 
             <div class="project-info">
-
                 <h3>${project.title}</h3>
-
                 <p>${project.description}</p>
-
-                <span class="view-more">
-                    View details →
-                </span>
-
+                <span class="view-more">View details →</span>
             </div>
 
         </a>
+      `
+            )
+            .join("");
 
-    `).join('');
-
-    initShowMore();
+        initShowMore();
+    } catch (err) {
+        console.log("Projects load error");
+    }
 }
 
-// Reveal elements on scroll
+// ======================
+// REVEAL ANIMATION
+// ======================
 const reveal = () => {
+    const reveals = document.querySelectorAll(".reveal");
 
-    const reveals =
-        document.querySelectorAll('.reveal');
+    reveals.forEach((el) => {
+        const windowHeight = window.innerHeight;
+        const elementTop = el.getBoundingClientRect().top;
 
-    reveals.forEach(el => {
-
-        const windowHeight =
-            window.innerHeight;
-
-        const elementTop =
-            el.getBoundingClientRect().top;
-
-        const elementVisible = 150;
-
-        if (elementTop < windowHeight - elementVisible) {
-
-            el.classList.add('active');
-
+        if (elementTop < windowHeight - 150) {
+            el.classList.add("active");
         }
-
     });
-
 };
 
+window.addEventListener("scroll", reveal);
+
+// ======================
+// SMOOTH SCROLL
+// ======================
 const initSmoothScroll = () => {
+    document
+        .querySelectorAll('a[href^="#"]')
+        .forEach((anchor) => {
+            if (anchor.target === "_blank") return;
 
-    document.querySelectorAll('a[href^="#"]')
-        .forEach(anchor => {
-
-            // Skip if it's an external link or opens in new tab
-            if (anchor.target === '_blank') return;
-
-            anchor.addEventListener('click', function (e) {
-
-                const target =
-                    document.querySelector(
-                        this.getAttribute('href')
-                    );
+            anchor.addEventListener("click", function (e) {
+                const target = document.querySelector(
+                    this.getAttribute("href")
+                );
 
                 if (target) {
-
                     e.preventDefault();
 
                     window.scrollTo({
-
                         top: target.offsetTop - 80,
-
-                        behavior: 'smooth'
-
+                        behavior: "smooth",
                     });
-
                 }
-
             });
-
         });
-
 };
 
+// ======================
+// LEAF ANIMATION
+// ======================
 const initLeafMotion = () => {
-
-    window.addEventListener('scroll', () => {
-
-        const leaves =
-            document.querySelectorAll('.leaf-decoration');
+    window.addEventListener("scroll", () => {
+        const leaves = document.querySelectorAll(
+            ".leaf-decoration"
+        );
 
         if (!leaves.length) return;
 
         const value = window.scrollY;
 
         leaves.forEach((leaf, index) => {
+            const speed = index === 0 ? 0.45 : 0.25;
 
-            const speed =
-                index === 0 ? 0.45 : 0.25;
-
-            leaf.style.top =
-                `${value * speed + (index === 0 ? 120 : 220)}px`;
-
+            leaf.style.top = `${value * speed + (index === 0 ? 120 : 220)
+                }px`;
         });
-
     });
-
 };
 
-window.addEventListener('scroll', reveal);
-
+// ======================
+// SHOW MORE PROJECTS
+// ======================
 const initShowMore = () => {
+    const btn = document.getElementById("show-more-btn");
 
-    const showMoreBtn =
-        document.getElementById('show-more-btn');
+    if (!btn) return;
 
-    if (!showMoreBtn) return;
-
-    showMoreBtn.onclick = () => {
-
-        const hiddenProjects =
-            document.querySelectorAll(
-                '.project-card.hidden'
-            );
-
-        const isHidden =
-            hiddenProjects.length > 0;
-
-        if (isHidden) {
-
-            hiddenProjects.forEach(card => {
-                card.classList.remove('hidden');
-            });
-
-            showMoreBtn.textContent =
-                'Show less projects';
-
-        } else {
-
-            const allProjects =
-                document.querySelectorAll(
-                    '.project-card'
-                );
-
-            allProjects.forEach((card, index) => {
-
-                if (index >= 4) {
-                    card.classList.add('hidden');
-                }
-
-            });
-
-            showMoreBtn.textContent =
-                'Show more projects';
-        }
-
-    };
-
-};
-
-const initExternalLinks = () => {
-
-    // Ensure all links in references section open in a new tab
-    const refLinks =
-        document.querySelectorAll('.references a');
-
-    refLinks.forEach(link => {
-
-        link.setAttribute('target', '_blank');
-
-        link.setAttribute(
-            'rel',
-            'noopener noreferrer'
+    btn.onclick = () => {
+        const hidden = document.querySelectorAll(
+            ".project-card.hidden"
         );
 
-    });
+        if (hidden.length > 0) {
+            hidden.forEach((c) => c.classList.remove("hidden"));
+            btn.textContent = "Show less projects";
+        } else {
+            const all = document.querySelectorAll(
+                ".project-card"
+            );
 
+            all.forEach((c, i) => {
+                if (i >= 4) c.classList.add("hidden");
+            });
+
+            btn.textContent = "Show more projects";
+        }
+    };
 };
 
-window.addEventListener('DOMContentLoaded', async () => {
+// ======================
+// EXTERNAL LINKS
+// ======================
+const initExternalLinks = () => {
+    document
+        .querySelectorAll(".references a")
+        .forEach((link) => {
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+        });
+};
 
+// ======================
+// INIT APP
+// ======================
+window.addEventListener("DOMContentLoaded", async () => {
     await loadProfile();
-
     await loadProjects();
 
     initSmoothScroll();
-
     initLeafMotion();
-
     initExternalLinks();
 
     reveal();
-
 });
