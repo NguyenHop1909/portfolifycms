@@ -1,41 +1,6 @@
 [
   {
-    "title": "MB “Country Love” Campaign",
-    "description": "CSR campaign reaching over 3,000,000 interactions.",
-    "link": "project-mb-bank.html",
-    "code": "MB",
-    "thumbClass": "project-thumb-1"
-  },
-
-  {
-    "title": "VietinBank Gold & Jewellery",
-    "description": "Tet 2025 campaign launching a premium gift collection.",
-    "link": "project-vietinbank.html",
-    "code": "VB",
-    "thumbClass": "project-thumb-2"
-  },
-
-  {
-    "title": "PÖNNIE PARTY",
-    "description": "Weekend party concept with viral video and macro KOL.",
-    "link": "project-ponnie-party.html",
-    "code": "PP",
-    "thumbClass": "project-thumb-3"
-  },
-
-  {
-    "title": "Nam Ngu Phu Quoc",
-    "description": "New product launch reached over 7,000,000 views.",
-    "link": "project-nam-ngu.html",
-    "code": "NN",
-    "thumbClass": "project-thumb-4"
-  },
-
-  {
-    "title": "Ôliv Series",
-    "description": "Natural olive oil product series (2025 - 2026).",
-    "link": "project-oliv-series.html",
-    "code": "OL",
-    "thumbClass": "project-thumb-5"
+    "title": "Test",
+    "description": "Hello"
   }
 ]
